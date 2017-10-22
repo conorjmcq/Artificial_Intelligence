@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -87,8 +87,25 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
 
+    frontier = util.Stack()
+
+    frontier.push((problem.getStartState(), []))
+    pastNodes = []
+    while not frontier.isEmpty():
+        node,path = frontier.pop()
+        if problem.isGoalState():
+            print path
+            return path
+        if node not in pastNodes:
+            pastNodes.append(node)
+            for state,direction,cost in problem.getSuccessors(node):
+                if state not in pastNodes:
+                    newPath = path[:]
+                    newPath.append(direction)
+                    frontier.push((state,newPath))
+
+    return []
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
