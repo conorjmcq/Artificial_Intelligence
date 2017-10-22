@@ -89,21 +89,20 @@ def depthFirstSearch(problem):
     "*** YOUR CODE HERE ***"
 
     frontier = util.Stack()
-
     frontier.push((problem.getStartState(), []))
-    pastNodes = []
+    explored = []
     while not frontier.isEmpty():
         node,path = frontier.pop()
         if problem.isGoalState(node):
             print path
             return path
-        if node not in pastNodes:
-            pastNodes.append(node)
+        if node not in explored:
+            explored.append(node)
             for state,direction,cost in problem.getSuccessors(node):
-                if state not in pastNodes:
-                    newPath = path[:]
-                    newPath.append(direction)
-                    frontier.push((state,newPath))
+                if state not in explored:
+                    updatedPath = path[:]
+                    updatedPath.append(direction)
+                    frontier.push((state,updatedPath))
 
     return []
 def breadthFirstSearch(problem):
@@ -113,26 +112,45 @@ def breadthFirstSearch(problem):
     frontier = util.Queue()
 
     frontier.push((problem.getStartState(), []))
-    pastNodes = []
+    explored = []
     while not frontier.isEmpty():
-        node,path = frontier.pop()
+        node, path = frontier.pop()
         if problem.isGoalState(node):
             print path
             return path
-        if node not in pastNodes:
-            pastNodes.append(node)
+        if node not in explored:
+            explored.append(node)
             for state,direction,cost in problem.getSuccessors(node):
-                if state not in pastNodes:
-                    newPath = path[:]
-                    newPath.append(direction)
-                    frontier.push((state,newPath))
+                if state not in explored:
+                    updatedPath = path[:]
+                    updatedPath.append(direction)
+                    frontier.push((state,updatedPath))
 
     return []
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    frontier = util.PriorityQueue()
+
+    frontier.push((problem.getStartState(), []), 0)
+    explored = []
+    while not frontier.isEmpty():
+        node, path = frontier.pop()
+        if problem.isGoalState(node):
+            print path
+            return path
+        if node not in explored:
+            explored.append(node)
+            for state, direction, cost in problem.getSuccessors(node):
+                if state not in explored:
+                    updatedPath = path[:]
+                    updatedPath.append(direction)
+                    totalCost = problem.getCostOfActions(path) + cost
+                    frontier.push((state,updatedPath), totalCost)
+
+    return []
 
 def nullHeuristic(state, problem=None):
     """
