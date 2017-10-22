@@ -94,7 +94,7 @@ def depthFirstSearch(problem):
     pastNodes = []
     while not frontier.isEmpty():
         node,path = frontier.pop()
-        if problem.isGoalState():
+        if problem.isGoalState(node):
             print path
             return path
         if node not in pastNodes:
@@ -109,7 +109,25 @@ def depthFirstSearch(problem):
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    frontier = util.Queue()
+
+    frontier.push((problem.getStartState(), []))
+    pastNodes = []
+    while not frontier.isEmpty():
+        node,path = frontier.pop()
+        if problem.isGoalState(node):
+            print path
+            return path
+        if node not in pastNodes:
+            pastNodes.append(node)
+            for state,direction,cost in problem.getSuccessors(node):
+                if state not in pastNodes:
+                    newPath = path[:]
+                    newPath.append(direction)
+                    frontier.push((state,newPath))
+
+    return []
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
