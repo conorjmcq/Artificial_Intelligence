@@ -178,8 +178,8 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 if state not in explored:
                     updatedPath = path[:]
                     updatedPath.append(direction)
-                    totalCost = (problem.getCostOfActions(path) + cost)
-                    + heuristic(state, problem)
+                    costSoFar = problem.getCostOfActions(path) + cost
+                    totalCost = heuristic(state, problem) + costSoFar
                     frontier.push((state,updatedPath), totalCost)
 
     return []
