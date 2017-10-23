@@ -295,14 +295,21 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        """
+        getStartState() will return a tuple, the start point of Pacman, and
+        the list of corners he has yet to visit. The intention is to pop off
+        the corner he has visited from the list as we move along. No need to
+        create a new dataset.
+        """
+        return (self.startingPosition, list(self.corners))
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        " As we visit each corner, the lenght of the list shortens -> 0."
+        return len(state[1]) == 0
 
     def getSuccessors(self, state):
         """
@@ -323,8 +330,25 @@ class CornersProblem(search.SearchProblem):
             #   dx, dy = Actions.directionToVector(action)
             #   nextx, nexty = int(x + dx), int(y + dy)
             #   hitsWall = self.walls[nextx][nexty]
+            x,y = state[0]
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
 
-            "*** YOUR CODE HERE ***"
+            """
+            Each state tuple will contain it's position and the amount of
+            corners left to visit.
+            E.g. nextState = ((x,y), cornersLeft).
+            Each move doesn't have an explicit cost as Pacman only moves one
+            position, therefore we have it as '1'.
+            """
+            if not self.walls[nextx][nexty]:
+                nextPos = (nextx, nexty)
+                cornersLeft = state[1][:]
+                for corner in cornersLeft:
+                    if corner == nextPos:
+                        cornersLeft.remove(corner)
+                nextState = (nextPos,cornersLeft)
+                successors.append((nextState, action, 1))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
@@ -360,7 +384,21 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    """
+    Decided to use the manhattan distance algorithm as Pacman's traversal
+    through the maze is similar to 4 degrees of movement required for this
+    algorithm. By getting the max of the set of heuristics we are computing a
+    number that is as close to the actual cost of the problem while maintaining
+    efficiency.
+    """
+    x,y = state[0]
+    cornersLeft = state[1]
+    heuristic = 0
+    for corner in cornersLeft:
+        hx, hy = corner[0], corner[1]
+        heuristic = max(heuristic,abs(x - hx) + abs(y - hy))
+
+    return heuristic
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
